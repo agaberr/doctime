@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const doctorsController = require('../controllers/doctorControllers');
-// const authdoctor = require('../middleware/authdoctor');
+const { auth, restrict } = require('../middleware/verifyToken');
 
 router.route('/')
-    .get(doctorsController.getAllDoctors)
+    .get(auth, restrict(["admin"]),doctorsController.getAllDoctors)
 
 
 router.route('/:id')
-    .put(doctorsController.updateDoctor)
-    .delete(doctorsController.deleteDoctor)
+    .put(auth, restrict(["doctor"]),doctorsController.updateDoctor)
+    .delete(auth, restrict(["doctor"]),doctorsController.deleteDoctor)
 
 router.route('/getdoctor/:id')
-    .get(doctorsController.getDoctor)
+    .get(auth, restrict(["doctor"]),doctorsController.getDoctor)
 
 module.exports = router;
