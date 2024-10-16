@@ -58,12 +58,16 @@ const Header = () => {
 
           {/* LOGIN BUTTON */}
           <div className="flex items-center gap-4">
-            <h1>{user?.name}</h1>
-            <Link to="/login">
+            
+            {
+              token && user ?  <h1>{user?.name}</h1> : <Link to="/login">
               <button className="btn bg-primaryColor py-2 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
                 Login
               </button>
             </Link>
+            }
+
+            
           </div>
         </div>
       </div>
