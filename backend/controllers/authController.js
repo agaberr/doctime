@@ -14,7 +14,7 @@ const authController = {
 
     signup: async (req, res) => {
 
-        const { email, password, name, role, photo, gender} = req.body;
+        const { email, password, name, role, photo, gender, ticketPrice} = req.body;
 
         try {
             let user = null

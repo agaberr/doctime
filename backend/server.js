@@ -7,6 +7,7 @@ const connectDB = require('./config/dbConn');
 
 const authRoute = require('./routes/authRoutes');
 const userRoute = require('./routes/userRoutes');
+const doctorRoute = require('./routes/doctorRoutes');
 
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
+app.use('/api/doctors', doctorRoute);
 
 
 
