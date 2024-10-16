@@ -14,4 +14,7 @@ router.route('/:id')
 router.route('/getdoctor/:id')
     .get(auth, restrict(["doctor"]),doctorsController.getDoctor)
 
+router.route('/profile/me')
+    .get(auth, restrict(["doctor"]),doctorsController.getDoctorProfile)
+
 module.exports = router;

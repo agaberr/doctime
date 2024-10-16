@@ -7,6 +7,11 @@ const { auth, restrict } = require('../middleware/verifyToken');
 router.route('/')
     .get(auth, restrict(["admin"]),usersController.getAllUsers)
 
+router.route('/profile/me')
+    .get(auth, restrict(["patient"]),usersController.getUserProfile)
+
+router.route('/appointments/my-appointments')
+    .get(auth, restrict(["patient"]),usersController.getAppointments)
 
 router.route('/:id')
     .put(auth, restrict(["patient"]),usersController.updateUser)

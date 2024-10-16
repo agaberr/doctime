@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Booking = require('../models/Booking');
+const Doctor = require('../models/Doctor');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 
@@ -57,6 +59,41 @@ const userController = {
         res.status(500).json({ message: 'Server error'});
     }
     },
+
+    getUserProfile: async (req, res) => {
+        const userId = req.userId;
+
+        try {
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return res.status(401).json({success:false, message: 'User not found'});
+            }
+
+            const {password, ...rest} = user._doc;
+            
+            res.status(200).json({success: true, message: 'User data found successfully', data: {...rest}});
+
+        } catch (err) {
+            res.status(500).json({success: false, message: 'Server error'}); 
+        }
+    },
+
+    getAppointments: async (req, res) => {
+
+        try {
+
+            const bookings = await Booking.find({user:req.userId});
+
+            const doctorIds = bookings.map(booking=>booking.doctor.id);
+
+            const doctors = await Doctor.find({_id: {$in: doctorIds}}).select("-password");
+
+            res.status(200).json({success: true, message: 'Appointments found successfully', data: doctors});
+        } catch (err) {
+            res.status(500).json({success: false, message: 'Server error'}); 
+        }
+    }
 }
 
 module.exports = userController;
