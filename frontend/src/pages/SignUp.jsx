@@ -1,11 +1,17 @@
 import {React,useState} from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import sign from "../assets/images/signup.gif"
 import patient from "../assets/images/patient-avatar.png"
-import {useNavigate} from "react-router-dom";
+import { BASE_URL } from "../config";
+import { toast } from 'react-toastify';
+import HashLoader from "react-spinners/HashLoader";
 const SignUp = ()=>{
 
     const [selectFile,setSelectFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+
     const [formData,setFormData] = useState({
         name:"",
         email:"",
@@ -15,7 +21,6 @@ const SignUp = ()=>{
         role:""
     });
   
-    const navigate = useNavigate();
     const handleInputChange = (e)=>{
         setFormData({...formData,[e.target.name]:e.target.value});
     };
@@ -26,12 +31,35 @@ const SignUp = ()=>{
     };
     const submitHandler = async (e)=>{
         e.preventDefault();
-        
-        // sign up backend
-            
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${BASE_URL}/api/auth/signup`,
+               {method: "POST",
+                headers: {
+                    'Content-Type': 'Application/json',
+
+                },
+                body: JSON.stringify(formData)}
+            )
+
+            const {message} = await res.json();
+
+            if (!res.ok) {
+                throw new Error(message);
+            }
+
+            setLoading(false);
+            toast.success('User registered successfully');
+            navigate('/login');
+
+        } catch (error) {
+            toast.error(error.message);
+            setLoading(false);
+        }            
       
     };
-    return (
+    return ( <>
         <section className="px-5 lg:px-0 py-28">
             <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md ">
                 <div>
@@ -106,8 +134,12 @@ const SignUp = ()=>{
                     </div>
                   </div>
                   <div className="mt-7">
-                  <button type="submit" className="w-full bg-blue-600 text-white text-[18px] leading-[30px] rounded-lg
-                        px-4 py-3">SignUp</button>
+                  <button 
+                    disabled={loading && true}
+                    type="submit" className="w-full bg-blue-600 text-white text-[18px] leading-[30px] rounded-lg
+                        px-4 py-3">
+                            {loading ? <HashLoader size={35} color="ffffff"/> : 'SignUp'}
+                    </button>
                     </div>
                     <p className="mt-5 text-black text-center">
                         Already  have an account
@@ -120,6 +152,7 @@ const SignUp = ()=>{
                 </div>
             </div>
         </section>
+        </>
     )
 }
 export default SignUp;
