@@ -1,14 +1,17 @@
 import {React,useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import sign from "../assets/images/signup.gif"
 import patient from "../assets/images/patient-avatar.png"
 import { BASE_URL } from "../config";
 import { toast } from 'react-toastify';
 import HashLoader from "react-spinners/HashLoader";
+
+
+
 const SignUp = ()=>{
 
     const [selectFile,setSelectFile] = useState(null);
     const [loading, setLoading] = useState(false);
+
 
     const navigate = useNavigate();
 
@@ -43,10 +46,10 @@ const SignUp = ()=>{
                 body: JSON.stringify(formData)}
             )
 
-            const {message} = await res.json();
+            const result = await res.json();
 
             if (!res.ok) {
-                throw new Error(message);
+                throw new Error(result.message);
             }
 
             setLoading(false);
