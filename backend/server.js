@@ -6,6 +6,7 @@ const { logger } = require('./middleware/logger');
 const connectDB = require('./config/dbConn');
 
 const authRoute = require('./routes/authRoutes');
+const userRoute = require('./routes/userRoutes');
 
 
 dotenv.config();
@@ -30,7 +31,8 @@ app.get('/', (req, res) => {
 // routes
 
 app.use('/api/auth', authRoute);
- // connect to db
+app.use('/api/users', userRoute);
+
 
 
 
