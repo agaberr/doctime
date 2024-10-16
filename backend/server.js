@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const { logger } = require('./middleware/logger');
 const connectDB = require('./config/dbConn');
 
+const authRoute = require('./routes/authRoutes');
+
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +27,10 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Doctime API');
 });
 
+// routes
+
+app.use('/api/auth', authRoute);
+ // connect to db
 
 
 
