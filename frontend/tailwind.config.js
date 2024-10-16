@@ -1,22 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{html,js}"],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     extend: {
-      colors:{
+      colors: {
         primaryColor: "#0067FF",
         yellowColor: "#FEB60D",
         purpleColor: "#9771FF",
-        irisBlueColor: "#D1B5C5",
+        irisBlueColor: "#01B5C5",
         headingColor: "#181A1E",
-        textColor: "#4E545F"
+        textColor: "#4E545F",
       },
 
       boxShadow: {
-        panelShadow: "rgba (17, 12, 46, 0.15) 0px 40px 100px 0px;",
+        panelShadow: "rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;",
+      },
     },
   },
-},
   plugins: [],
-}
-
+};
