@@ -11,16 +11,8 @@ const DoctorController = {
         
         try {
 
-            const {query} = req.query;
-            let doctors;
-
-            if (query){
-                doctors = await Doctor.find({isApproved:"approved", $or:[{name: {$regex:query, $options: "i"}}, 
-                    {specialization: {$regex:query, $options: "i"}}
-                ]}).select("-password");
-            } else {
-                doctors = await Doctor.find({isApproved:"approved"}).select("-password")
-            }
+            
+            let doctors = await Doctor.find({}).select("-password")
 
             res.status(200).json({success: true, message: 'Doctors found successfully', data: doctors});
         
@@ -87,6 +79,30 @@ const DoctorController = {
 
         } catch (err) {
             res.status(500).json({success: false, message: 'Server error'}); 
+        }
+    },
+
+    bookAppointment: async (req, res) => {
+        const { doctorId, userId, appointmentDate } = req.body;
+
+        try {
+            const doctor = await Doctor.findById(doctorId);
+            if (!doctor) {
+                return res.status(404).json({ success: false, message: "Doctor not found" });
+            }
+
+            const booking = new Booking({
+                doctor: doctorId,
+                user: userId,
+                appointmentDate,
+            });
+
+            await booking.save();
+            res.status(201).json({ success: true, message: "Appointment booked successfully", data: booking });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ success: false, message: 'Server error' });
         }
     }
 }

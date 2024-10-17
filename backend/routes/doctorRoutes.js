@@ -4,7 +4,7 @@ const doctorsController = require('../controllers/doctorControllers');
 const { auth, restrict } = require('../middleware/verifyToken');
 
 router.route('/')
-    .get(auth, restrict(["admin"]),doctorsController.getAllDoctors)
+    .get(doctorsController.getAllDoctors)
 
 
 router.route('/:id')
@@ -16,5 +16,8 @@ router.route('/getdoctor/:id')
 
 router.route('/profile/me')
     .get(auth, restrict(["doctor"]),doctorsController.getDoctorProfile)
+
+router.route('/book-appointment')
+    .post(doctorsController.bookAppointment)
 
 module.exports = router;

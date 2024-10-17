@@ -13,10 +13,6 @@ const Links = [
     display: 'Doctors',
   },
   {
-    path: '/services',
-    display: 'Our Services',
-  },
-  {
     path: '/contact',
     display: 'Contact Us',
   },
@@ -60,7 +56,11 @@ const Header = () => {
           <div className="flex items-center gap-4">
             
             {
-              token && user ?  <h1>{user?.name}</h1> : <Link to="/login">
+              token && user ?  (
+                <Link to={user.role === 'doctor' ? '/doctor/profile/me' : '/users/profile/me'}>
+                  <h1 className="cursor-pointer text-2xl">{user?.name}</h1>
+                </Link>
+              ) : <Link to="/login">
               <button className="btn bg-primaryColor py-2 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
                 Login
               </button>

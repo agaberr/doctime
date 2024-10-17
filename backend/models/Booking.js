@@ -12,20 +12,10 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    ticketPrice: { type: String, required: true },
     appointmentDate: {
       type: Date,
       required: true,
-    },
-    status: {
-      type: String,
-      enum: ["pending", "approved", "cancelled"],
-      default: "pending",
-    },
-    isPaid: {
-      type: Boolean,
-      default: true,
-    },
+    }
   },
   { timestamps: true }
 );
