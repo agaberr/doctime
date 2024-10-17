@@ -3,6 +3,7 @@ import useGetProfile from "../../hooks/userFetchData"
 import { BASE_URL } from "../../config";
 import DoctorTabs from "./DoctorTabs";
 import img from "../../assets/images/doctor1.jpg"
+import DoctorAppointments from "./DoctorAppointments"; 
 
 const DoctorAccount = () => {
     
@@ -39,7 +40,7 @@ const DoctorAccount = () => {
 
 
                         )}
-                        {tab === "appointments" && <div>appointments</div>}
+                        {tab === "appointments" && <DoctorAppointments appointments={data.appointments} />}
                         {tab === "profile" && <div>profile settings</div>}
                     </div>
 
