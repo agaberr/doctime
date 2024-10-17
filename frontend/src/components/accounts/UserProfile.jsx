@@ -1,75 +1,80 @@
-import {React,useState} from "react";
-import { Link, useNavigate } from "react-router-dom";
-import patient from "../assets/images/patient-avatar.png"
-import { BASE_URL } from "../config";
-import { toast } from 'react-toastify';
+import {React,useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config";
+import { toast } from "react-toastify";
+import { token } from "../../config";
+import patient from "../../assets/images/patient-avatar.png"
 import HashLoader from "react-spinners/HashLoader";
 
 
+const UserProfile = ({user}) => {
 
-const SignUp = ()=>{
+  const [selectFile,setSelectFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const [selectFile,setSelectFile] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const [formData,setFormData] = useState({
+      name:"",
+      email:"",
+      password:"",
+    //   photo:selectFile,
+      gender:"",
+      role:""
+  });
 
-    const navigate = useNavigate();
+  const handleInputChange = (e)=>{
+      setFormData({...formData,[e.target.name]:e.target.value});
+  };
+  const handleFileInputChange = async (e)=>{
+      const file = e.target.files[0];
+      console.log(file);
 
-    const [formData,setFormData] = useState({
-        name:"",
-        email:"",
-        password:"",
-        photo:selectFile,
-        gender:"",
-        role:""
-    });
-  
-    const handleInputChange = (e)=>{
-        setFormData({...formData,[e.target.name]:e.target.value});
-    };
-    const handleFileInputChange = async (e)=>{
-        const file = e.target.files[0];
-        console.log(file);
+  };
 
-    };
-    const submitHandler = async (e)=>{
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            const res = await fetch(`${BASE_URL}/api/auth/signup`,
-               {method: "POST",
+  const submitHandler = async event => {
+    
+    event.preventDefault();
+    setLoading(true);
+    
+    try { 
+        const res = await fetch(`${BASE_URL}/api/users/${user._id}`, 
+            {
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'Application/json',
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }, body: JSON.stringify(formData),
+    });
+    
+    // console.log(user._id);
 
-                },
-                body: JSON.stringify(formData)}
-            )
+    const { message } = await res.json();
+    
+    if (!res.ok) {
+        throw new Error(message);
+    }
+    
+    setLoading(false);
+    toast.success(message);
+    
+    navigate("/users/profile/me");
 
-            const result = await res.json();
+    } catch (err) {
 
-            if (!res.ok) {
-                throw new Error(result.message);
-            }
-
-            setLoading(false);
-            toast.success('User registered successfully');
-            navigate('/login');
-
-        } catch (error) {
-            toast.error(error.message);
-            setLoading(false);
-        }            
-      
+        toast.error(err.message);
+        setLoading(false);
+    
+    }
     };
-    return ( <>
-        <section className="px-5 lg:px-0 py-28">
-            <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md ">
-                <div>
-                    <div className=" lg:pl-16 py-10">
-                        <h3 className="text-black text-[22px] leading-9 font-bold mb-10">
-                        Create an <span className="text-blue-600 ">Account</span></h3>
-                        <form  method = "post" onSubmit={submitHandler}>
+
+  useEffect(()=>{
+    setFormData({name: user.name, email:user.email, gender: user.gender})
+    }, [user]);
+
+  return (
+    <div>
+      <form  method = "post" onSubmit={submitHandler}>
                         <div className="mb-5">
                         <input type="name" placeholder="Enter Your name" name = "name" value={formData.name}
                            onChange={handleInputChange}
@@ -141,21 +146,12 @@ const SignUp = ()=>{
                     disabled={loading && true}
                     type="submit" className="w-full bg-blue-600 text-white text-[18px] leading-[30px] rounded-lg
                         px-4 py-3">
-                            {loading ? <HashLoader size={35} color="ffffff"/> : 'SignUp'}
+                            {loading ? <HashLoader size={35} color="ffffff"/> : 'Update'}
                     </button>
                     </div>
-                    <p className="mt-5 text-black text-center">
-                        Already  have an account
-                        <Link to = "/login" className="text-blue-600 font-medium ml-1">Login</Link>
-                    </p>
-                
-                  
                         </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-        </>
-    )
+    </div>
+  )
 }
-export default SignUp;
+
+export default UserProfile;

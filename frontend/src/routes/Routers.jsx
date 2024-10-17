@@ -9,7 +9,8 @@ import SignUp from '../pages/SignUp'
 import Contact from '../pages/Contact'
 import Doctors from '../pages/Doctors/Doctors'
 import DoctorsDetails from '../pages/Doctors/DoctorsDetails'
-
+import UserAccount from '../components/accounts/UserAccount'
+import DoctorAccount from '../components/accounts/DoctorAccount'
 
 
 const Routers = () => {
@@ -22,6 +23,8 @@ const Routers = () => {
       <Route path='/contact' element={<Contact />} />
       <Route path='/doctors' element={<Doctors />} />
       <Route path='/doctors/:id' element={<DoctorsDetails />} />
+      <Route path='/users/profile/me' element={<UserAccount />} />
+      <Route path='/doctors/profile/me' element={<DoctorAccount />} />
     </Routes>
   )
 }

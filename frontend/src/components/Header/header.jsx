@@ -1,6 +1,7 @@
-import React from 'react';
+import {useContext } from 'react';
 import logo from '../../assets/images/logo.png';
 import { NavLink, Link } from 'react-router-dom';
+import { authContext } from "../../context/AuthContext";
 
 const Links = [
   {
@@ -12,16 +13,16 @@ const Links = [
     display: 'Doctors',
   },
   {
-    path: '/services',
-    display: 'Our Services',
-  },
-  {
     path: '/contact',
     display: 'Contact Us',
   },
 ];
 
 const Header = () => {
+
+  const {user, role, token} = useContext(authContext);
+
+
   return (
     <header className="header flex items-center">
       <div className="container">
@@ -53,11 +54,20 @@ const Header = () => {
 
           {/* LOGIN BUTTON */}
           <div className="flex items-center gap-4">
-            <Link to="/login">
+            
+            {
+              token && user ?  (
+                <Link to={user.role === 'doctor' ? '/doctor/profile/me' : '/users/profile/me'}>
+                  <h1 className="cursor-pointer text-2xl">{user?.name}</h1>
+                </Link>
+              ) : <Link to="/login">
               <button className="btn bg-primaryColor py-2 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
                 Login
               </button>
             </Link>
+            }
+
+            
           </div>
         </div>
       </div>
