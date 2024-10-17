@@ -1,43 +1,71 @@
-import React from "react";
-import Doctorcards from "../../components/doctors/Doctorcards"
-import { doctors } from "../../assets/data/doctors";
+import React, { useEffect, useState, useContext } from "react";
+import Doctorcards from "../../components/doctors/Doctorcards";
+import { BASE_URL } from "../../config"; 
+import Loading from "../../components/animations/Loading";
+import Error from "../../components/animations/Error";
+import { authContext } from "../../context/AuthContext"; // Import the auth context
+import useFetchData from "../../hooks/userFetchData";
 
-const Doctors = ()=>{
-    return (
-        <>
-            <section>
-                <div className="container text-center">
-                    <h2 className="text-xl text-center font-extrabold text-black">Find a Doctor</h2>
-                    <div className="max-w-[570px] mt-[30px] mx-auto bg-[#0066ff2c] rounded-md flex items-center justify-between">
-                        <input
-                        type="text"
-                        className="py-4 pl-4 pr-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-black"
-                        placeholder="Search Doctor"
-                        />
-                        <button className="bg-blue-400 text-base ml-[250px] md:ml-[100px] xl:-[200px] lg:ml-[180px] py-4 px-6  text-white font-extrabold flex items-center 
-                        justify-center rounded-full mt-0  rounded-r-md">Search</button>
-                    </div>
-                </div>
-            </section>
-            <section>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5  lg:gap-[30px] mt-[30px] lg:mt-[55px]">
-    {doctors.map((doctor,index) =><Doctorcards doctor = {doctor} index = {index} key = {doctor.id} />)}
+const Doctors = () => {
+  const { data: userData, loading: loadingUser, error: userError } = useFetchData(`${BASE_URL}/api/users/profile/me`); // Fetch user profile
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    </div>
-   
-            </section>
-            <section>
-            <div>
-                <div className="xl:w-[470px] mx-auto">
-                    <h2 className="text-xl text-center font-extrabold text-black">What Our Patients say</h2>
-                    <p className="text-center mt-1 text-[15px] text-black">WorldClass care for everyone.Our Health
-                                 Systems Offers unmatched<br/>
-                                  expert health care</p>
-                                  
-                </div>
-              </div>
-            </section>
-        </>
-    )
-}
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/doctors`);
+        const data = await response.json();
+        
+        if (Array.isArray(data.data)) {
+          setDoctors(data.data);
+        } else {
+          throw new Error("Invalid data format: Expected an array");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+  if (loading || loadingUser) {
+    return <Loading />;
+  }
+
+  if (error || userError) {
+    return <Error errMessage={error || userError} />;
+  }
+
+  return (
+    <>
+      <section>
+        <div className="container text-center">
+          <h2 className="text-xl text-center font-extrabold text-black">Find a Doctor</h2>
+        </div>
+      </section>
+      <section>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
+          {doctors.length > 0 ? (
+            doctors.map((doctor, index) => (
+              <Doctorcards 
+                doctor={doctor} 
+                index={index} 
+                key={doctor.id} 
+                userId={userData?._id} // Pass userId as a prop
+              />
+            ))
+          ) : (
+            <p>No doctors found.</p>
+          )}
+        </div>
+      </section>
+    </>
+  );
+};
+
 export default Doctors;
