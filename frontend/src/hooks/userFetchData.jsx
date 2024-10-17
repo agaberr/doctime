@@ -13,25 +13,28 @@ const useFetchData = (url) => {
         
         setloading(true);
 
-        try {
+       
             const fetchData = async () => {
+            try {
                 const res = await fetch(url, {
                     headers: {
                         Authorization: `Bearer ${token}`}
                     })
                 const result = await res.json()
-
-                if (!result.ok){
+                
+                if (!result){
                     throw new Error(result.message)
                 }
-
+                
                 setData(result.data);
                 setloading(false);
-            }
         } catch (e) {
             setloading(false)
             setError(e.message)
         }
+    }
+        fetchData();
+
     }, [url]);
 
     return {
