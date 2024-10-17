@@ -1,8 +1,13 @@
-import {React,useState} from "react";
+import {React,useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import patient from "../assets/images/patient-avatar.png"
+import { BASE_URL } from "../../config";
+import { toast } from "react-toastify";
+import { token } from "../../config";
+import patient from "../../assets/images/patient-avatar.png"
 import HashLoader from "react-spinners/HashLoader";
-const UserProfile = () => {
+
+
+const UserProfile = ({user}) => {
 
   const [selectFile,setSelectFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,7 +18,7 @@ const UserProfile = () => {
       name:"",
       email:"",
       password:"",
-      photo:selectFile,
+    //   photo:selectFile,
       gender:"",
       role:""
   });
@@ -26,11 +31,47 @@ const UserProfile = () => {
       console.log(file);
 
   };
-  const submitHandler = async (e)=>{
-      e.preventDefault();
-      setLoading(true);
 
-  }
+  const submitHandler = async event => {
+    
+    event.preventDefault();
+    setLoading(true);
+    
+    try { 
+        const res = await fetch(`${BASE_URL}/api/users/${user._id}`, 
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }, body: JSON.stringify(formData),
+    });
+    
+    // console.log(user._id);
+
+    const { message } = await res.json();
+    
+    if (!res.ok) {
+        throw new Error(message);
+    }
+    
+    setLoading(false);
+    toast.success(message);
+    
+    navigate("/users/profile/me");
+
+    } catch (err) {
+
+        toast.error(err.message);
+        setLoading(false);
+    
+    }
+    };
+
+  useEffect(()=>{
+    setFormData({name: user.name, email:user.email, gender: user.gender})
+    }, [user]);
+
   return (
     <div>
       <form  method = "post" onSubmit={submitHandler}>
@@ -105,7 +146,7 @@ const UserProfile = () => {
                     disabled={loading && true}
                     type="submit" className="w-full bg-blue-600 text-white text-[18px] leading-[30px] rounded-lg
                         px-4 py-3">
-                            {loading ? <HashLoader size={35} color="ffffff"/> : 'SignUp'}
+                            {loading ? <HashLoader size={35} color="ffffff"/> : 'Update'}
                     </button>
                     </div>
                         </form>

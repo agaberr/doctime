@@ -1,8 +1,8 @@
-import useFetchData from "../../hooks/useFetchData";
+import useFetchData from "../../hooks/userFetchData";
 import { BASE_URL } from "../../config";
-import DoctorCard from "./../.. /conponents/Doctors/DoctorCard" ;
-import Loading from "../../components/Loader/Loading";
-import Error from "../../components/Error/Error";
+import DoctorCard from "../doctors/Doctorcards" ;
+import Loading from "../../components/animations/Loading";
+import Error from "../../components/animations/Error";
 
 
 const UserBooking = () => {
@@ -10,7 +10,7 @@ const UserBooking = () => {
         data: appointments,
             loading,
             error,
-        } = useFetchoata(`${BASE_URL}/users/appointments/my-appointments`);
+        } = useFetchData(`${BASE_URL}'/api/users/appointments/my-appointments`);
 
     return (
         <div>
@@ -25,7 +25,7 @@ const UserBooking = () => {
                 </div>
             )}
 
-            {!loading && !error && appointments.length ===0 && (
+            {!loading && !error && appointments.length === 0 && (
                 <h2 className="mt-5 text-center text-headingColor leading-7 text-[20px] font-semibold text-primaryColor">
                     You Didn't book any appointments!!!
                 </h2>

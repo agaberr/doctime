@@ -16,9 +16,9 @@ const UserAccount = () => {
     const navigate = useNavigate();
     const [tab, setTab] = useState();
 
-    const {data:userData, loading, error} = useGetProfile(`${BASE_URL}/users/profile/me`);
+    const {data:userData, loading, error} = useGetProfile(`${BASE_URL}/api/users/profile/me`);
 
-    console.log(userData, "userdata")
+    // console.log(userData, "userdata")
 
     const handleLogout = () => {
         dispatch({type: "LOGOUT"});
@@ -89,7 +89,7 @@ return (
             </button>   
     </div>
                 {tab === 'bookings' && <UserBookings />}
-                {tab === 'settings' && <UserProfile />}
+                {tab === 'settings' && <UserProfile user={userData} />}
     </div>
     </div>
 </div>
