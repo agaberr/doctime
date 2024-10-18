@@ -12,6 +12,9 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    doctorName: {
+      type: "string",
+    },
     appointmentDate: {
       type: Date,
       required: true,

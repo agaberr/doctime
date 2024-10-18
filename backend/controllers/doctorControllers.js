@@ -94,6 +94,7 @@ const DoctorController = {
             const booking = new Booking({
                 doctor: doctorId,
                 user: userId,
+                doctorName: doctor.name,
                 appointmentDate,
             });
 

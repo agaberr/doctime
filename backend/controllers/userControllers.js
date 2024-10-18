@@ -80,20 +80,52 @@ const userController = {
     },
 
     getAppointments: async (req, res) => {
-
         try {
 
-            const bookings = await Booking.find({user:req.userId});
-
-            const doctorIds = bookings.map(booking=>booking.doctor.id);
-
-            const doctors = await Doctor.find({_id: {$in: doctorIds}}).select("-password");
-
-            res.status(200).json({success: true, message: 'Appointments found successfully', data: doctors});
+          // Find all bookings for the user
+          const bookings = await Booking.find({ user: req.params.id });
+      
+          if (!bookings || bookings.length === 0) {
+            return res.status(404).json({ success: false, message: 'No appointments found for this user' });
+          }
+      
+          // Extract doctor IDs from the bookings
+          const doctorIds = bookings.map(booking => booking.doctor);
+      
+          // Find doctors based on the extracted doctor IDs
+          const doctors = await Doctor.find({ _id: { $in: doctorIds } }).select("-password");
+      
+          res.status(200).json({ success: true, message: 'Appointments found successfully', data: doctors });
         } catch (err) {
-            res.status(500).json({success: false, message: 'Server error'}); 
+          res.status(500).json({ success: false, message: 'Server error' });
+        }
+      },
+
+      deleteAppointment: async (req, res) => {
+        const appointmentId = req.params.id;
+
+        try {
+            // Find the appointment by ID
+            const appointment = await Booking.findById(appointmentId);
+
+            if (!appointment) {
+                return res.status(404).json({ success: false, message: 'Appointment not found' });
+            }
+
+            // Ensure that the appointment belongs to the logged-in user
+            if (appointment.user.toString() !== req.userId) {
+                return res.status(403).json({ success: false, message: 'Unauthorized to delete this appointment' });
+            }
+
+            // Delete the appointment
+            await Booking.findByIdAndDelete(appointmentId);
+
+            res.status(200).json({ success: true, message: 'Appointment deleted successfully' });
+        } catch (err) {
+            res.status(500).json({ success: false, message: 'Server error' });
         }
     }
+      
 }
 
 module.exports = userController;

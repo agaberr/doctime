@@ -10,8 +10,11 @@ router.route('/')
 router.route('/profile/me')
     .get(auth, restrict(["patient"]),usersController.getUserProfile)
 
-router.route('/appointments/my-appointments')
-    .get(auth, restrict(["patient"]),usersController.getAppointments)
+router.route('/appointments/:id')
+    .get(usersController.getAppointments)
+
+router.route('/appointments/:id')
+    .delete(usersController.deleteAppointment);
 
 router.route('/:id')
     .put(auth, restrict(["patient"]),usersController.updateUser)
