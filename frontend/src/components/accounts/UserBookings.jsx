@@ -1,38 +1,55 @@
 import useFetchData from "../../hooks/userFetchData";
 import { BASE_URL } from "../../config";
-import DoctorCard from "../doctors/Doctorcards" ;
-import Loading from "../../components/animations/Loading";
-import Error from "../../components/animations/Error";
+import DoctorCard from "../doctors/Doctorcards2";
+import useGetProfile from "../../hooks/userFetchData";
 
+import { useState, useEffect } from "react";
 
 const UserBooking = () => {
-    const {
-        data: appointments,
-            loading,
-            error,
-        } = useFetchData(`${BASE_URL}'/api/users/appointments/my-appointments`);
+    const [appointments, setAppointments] = useState([]);
+    const { data: userData, loading, error } = useGetProfile(`${BASE_URL}/api/users/profile/me`);
+
+    useEffect(() => {
+        // Fetch appointments only after userData is available
+        const fetchAppointments = async () => {
+          if (userData && userData._id) {  // Check if userData._id exists
+            try {
+              const response = await fetch(`${BASE_URL}/api/users/appointments/${userData._id}`);
+              const data = await response.json();
+              
+              if (Array.isArray(data.data)) {
+                  setAppointments(data.data);
+              } else {
+                throw new Error("Invalid data format: Expected an array");
+              }
+            } catch (err) {
+              console.error("Error fetching appointments:", err.message);
+            }
+          }
+        };
+
+        fetchAppointments();
+    }, [userData]);  // Only run this effect when userData changes
 
     return (
         <div>
-            {loading && !error && <Loading />}
-            {error && !loading && <Error errMessages={error} />}
-
-            {!loading && !error && (
+            {loading ? (
+                <p>Loading appointments...</p>
+            ) : error ? (
+                <p>Error loading user profile: {error}</p>
+            ) : appointments.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     {appointments.map(doctor => (
-                        <DoctorCard doctors={doctor} key={doctors._id} />
-                ))}
+                        <DoctorCard doctor={doctor} key={doctor.id} />
+                    ))}
                 </div>
-            )}
-
-            {!loading && !error && appointments.length === 0 && (
+            ) : (
                 <h2 className="mt-5 text-center text-headingColor leading-7 text-[20px] font-semibold text-primaryColor">
-                    You Didn't book any appointments!!!
+                    You haven't booked any appointments yet!!!
                 </h2>
             )}
-
-
-            </div>
-        );
+        </div>
+    );
 };
+
 export default UserBooking;

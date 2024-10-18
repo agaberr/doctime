@@ -1,5 +1,5 @@
 import React from"react";
-import userImg from "../../assets/images/doctor1.jpg";
+import userImg from "../../assets/images/patient-avatar.png";
 import { useContext, useState } from "react";
 import { authContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -46,16 +46,10 @@ return (
 
                 <div className="text-center mt-4">
                     <h3 className="text-[18px] leading-[30px] Otext-headingColor font-bold ">
-                        Muhibur Rahman
+                        {userData.name}
                     </h3>
                     <p className="Mtext-textColor text-[15px] leading-6 font-medium ">
-                        exampleagmail .com
-                    </p>
-                    <p className="Mtext-textColor text-[15px] leading-6 font-medium ">
-                    Blood Type:
-                    <span className="ml-2 Otext-headingColor text-[22px] leading-8">
-                            o+
-                    </span>
+                        {userData.email}
                     </p>
                 </div>
 
